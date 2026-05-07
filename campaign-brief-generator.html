@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Travel Campaign Brief Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1410;
+    --paper: #f5f0e8;
+    --sand: #e8dfc8;
+    --terracotta: #c4622d;
+    --terracotta-light: #e8825a;
+    --sage: #5a7a5e;
+    --muted: #7a6e62;
+    --border: #d4c9b0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 24px 40px;
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    background: var(--paper);
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 400;
+    letter-spacing: -0.3px;
+  }
+
+  header span {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .tag {
+    background: var(--terracotta);
+    color: white;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 2px;
+    font-weight: 500;
+  }
+
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 48px 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+
+  .form-panel { }
+
+  .intro {
+    margin-bottom: 32px;
+  }
+
+  .intro h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1.25;
+    margin-bottom: 12px;
+  }
+
+  .intro h2 em {
+    font-style: italic;
+    color: var(--terracotta);
+  }
+
+  .intro p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .api-section {
+    background: var(--sand);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px;
+    margin-bottom: 24px;
+  }
+
+  .api-section label {
+    font-size: 11px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  .api-section input {
+    width: 100%;
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 10px 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .api-section input:focus { border-color: var(--terracotta); }
+
+  .api-section .hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  .field {
+    margin-bottom: 20px;
+  }
+
+  .field label {
+    font-size: 11px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  .options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .opt {
+    border: 1px solid var(--border);
+    background: var(--paper);
+    border-radius: 3px;
+    padding: 8px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--ink);
+    user-select: none;
+  }
+
+  .opt:hover { border-color: var(--terracotta-light); color: var(--terracotta); }
+
+  .opt.selected {
+    background: var(--terracotta);
+    border-color: var(--terracotta);
+    color: white;
+  }
+
+  .opt.multi.selected {
+    background: var(--sage);
+    border-color: var(--sage);
+    color: white;
+  }
+
+  textarea {
+    width: 100%;
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--ink);
+    resize: vertical;
+    min-height: 80px;
+    outline: none;
+    line-height: 1.5;
+    transition: border-color 0.2s;
+  }
+
+  textarea:focus { border-color: var(--terracotta); }
+
+  textarea::placeholder { color: var(--muted); }
+
+  .generate-btn {
+    width: 100%;
+    background: var(--terracotta);
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 8px;
+  }
+
+  .generate-btn:hover { background: #b05526; }
+  .generate-btn:disabled { background: var(--muted); cursor: not-allowed; }
+
+  /* Output panel */
+  .output-panel {
+    position: sticky;
+    top: 24px;
+  }
+
+  .output-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .output-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 400;
+  }
+
+  .copy-btn {
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .copy-btn:hover { border-color: var(--ink); color: var(--ink); }
+
+  .output-box {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 28px;
+    min-height: 480px;
+    position: relative;
+  }
+
+  .placeholder-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 480px;
+    text-align: center;
+    color: var(--muted);
+  }
+
+  .placeholder-state .compass {
+    font-size: 40px;
+    margin-bottom: 16px;
+    opacity: 0.4;
+  }
+
+  .placeholder-state p {
+    font-size: 14px;
+    line-height: 1.6;
+    max-width: 240px;
+  }
+
+  .loading-state {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 480px;
+    text-align: center;
+    color: var(--muted);
+  }
+
+  .loading-dots {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  .loading-dots span {
+    width: 8px;
+    height: 8px;
+    background: var(--terracotta);
+    border-radius: 50%;
+    animation: bounce 1.2s infinite;
+  }
+
+  .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes bounce {
+    0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+    40% { transform: translateY(-8px); opacity: 1; }
+  }
+
+  .brief-content {
+    display: none;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--ink);
+  }
+
+  .brief-content h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin: 20px 0 8px;
+    color: var(--terracotta);
+  }
+
+  .brief-content h4:first-child { margin-top: 0; }
+
+  .brief-content p { margin-bottom: 8px; }
+
+  .brief-content ul {
+    padding-left: 18px;
+    margin-bottom: 8px;
+  }
+
+  .brief-content li { margin-bottom: 4px; }
+
+  .brief-content strong { font-weight: 500; }
+
+  .brief-content .kpi-row {
+    display: flex;
+    gap: 12px;
+    margin: 12px 0;
+  }
+
+  .brief-content .kpi-box {
+    flex: 1;
+    background: var(--sand);
+    border-radius: 4px;
+    padding: 12px;
+    text-align: center;
+  }
+
+  .brief-content .kpi-box .metric {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--terracotta);
+  }
+
+  .brief-content .kpi-box .label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .error-msg {
+    background: #fef2f0;
+    border: 1px solid #f5c6be;
+    border-radius: 4px;
+    padding: 16px;
+    font-size: 13px;
+    color: #c0392b;
+    display: none;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 32px 0;
+  }
+
+  .prompt-chain {
+    margin-top: 20px;
+  }
+
+  .prompt-chain summary {
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    cursor: pointer;
+    user-select: none;
+    margin-bottom: 8px;
+  }
+
+  .prompt-chain summary:hover { color: var(--ink); }
+
+  .prompt-box {
+    background: var(--sand);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px;
+    font-family: monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--ink);
+    white-space: pre-wrap;
+    margin-top: 12px;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  footer a { color: var(--terracotta); text-decoration: none; }
+
+  @media (max-width: 768px) {
+    main { grid-template-columns: 1fr; padding: 24px 20px; }
+    header { padding: 16px 20px; }
+    .output-panel { position: static; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Travel Campaign Brief Generator</h1>
+  <span>by thaolst</span>
+  <div class="tag">Free Tool</div>
+</header>
+
+<main>
+  <div class="form-panel">
+    <div class="intro">
+      <h2>Build a campaign brief in <em>2 minutes,</em> not 2 hours.</h2>
+      <p>Built from real experience running growth for a multi-modal travel platform. Fill in your context, get a structured brief you can use immediately.</p>
+    </div>
+
+    <div class="api-section">
+      <label>Anthropic API Key</label>
+      <input type="password" id="apiKey" placeholder="sk-ant-..." />
+      <p class="hint">Your key stays in your browser. Never sent anywhere except Anthropic's API. <a href="https://console.anthropic.com" target="_blank" style="color:var(--terracotta)">Get a key →</a></p>
+    </div>
+
+    <div class="field">
+      <label>Target Segment</label>
+      <div class="options" id="segmentOpts">
+        <div class="opt" data-val="Connection Seeker">🤝 Connection Seeker</div>
+        <div class="opt" data-val="Relaxation Seeker">🌿 Relaxation Seeker</div>
+        <div class="opt" data-val="Family Traveler">👨‍👩‍👧‍👦 Family Traveler</div>
+        <div class="opt" data-val="Explorer">🗺️ Explorer</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Vertical (chọn nhiều nếu cần)</label>
+      <div class="options" id="verticalOpts">
+        <div class="opt multi" data-val="Airline">✈️ Airline</div>
+        <div class="opt multi" data-val="Bus">🚌 Bus</div>
+        <div class="opt multi" data-val="Train">🚂 Train</div>
+        <div class="opt multi" data-val="Hotel">🏨 Hotel</div>
+        <div class="opt multi" data-val="Bundle">📦 Bundle</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Season / Campaign Moment</label>
+      <div class="options" id="seasonOpts">
+        <div class="opt" data-val="Tết">🧧 Tết</div>
+        <div class="opt" data-val="30/4 Holiday">🌸 30/4</div>
+        <div class="opt" data-val="Summer Peak">☀️ Summer</div>
+        <div class="opt" data-val="Year-end">🎄 Year-end</div>
+        <div class="opt" data-val="Off-peak">🍃 Off-peak</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Campaign Goal</label>
+      <div class="options" id="goalOpts">
+        <div class="opt" data-val="Acquisition — grow new users">🆕 Acquisition</div>
+        <div class="opt" data-val="Retention — bring back existing users">🔄 Retention</div>
+        <div class="opt" data-val="Reactivation — win back lapsed users">💤 Reactivation</div>
+        <div class="opt" data-val="Brand awareness">📣 Brand</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Platform Type</label>
+      <div class="options" id="platformOpts">
+        <div class="opt" data-val="OTA (all-in-one travel platform)">🌐 OTA</div>
+        <div class="opt" data-val="Airline">✈️ Airline</div>
+        <div class="opt" data-val="Bus / Coach operator">🚌 Bus</div>
+        <div class="opt" data-val="Hotel chain">🏨 Hotel</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Any extra context? (optional)</label>
+      <textarea id="extraContext" placeholder="Budget level, competitor context, specific challenge, market you're in..."></textarea>
+    </div>
+
+    <button class="generate-btn" id="generateBtn" onclick="generateBrief()">
+      Generate Campaign Brief →
+    </button>
+
+    <hr class="divider">
+
+    <details class="prompt-chain">
+      <summary>📋 Prompt Chain Backup — use in Claude / ChatGPT without API key</summary>
+      <div class="prompt-box" id="promptChain">Fill in the form above to see your prompt chain.</div>
+    </details>
+  </div>
+
+  <div class="output-panel">
+    <div class="output-header">
+      <h3>Your Campaign Brief</h3>
+      <button class="copy-btn" onclick="copyBrief()">Copy</button>
+    </div>
+
+    <div class="error-msg" id="errorMsg"></div>
+
+    <div class="output-box">
+      <div class="placeholder-state" id="placeholderState">
+        <div class="compass">🧭</div>
+        <p>Fill in your campaign context on the left and generate your brief.</p>
+      </div>
+
+      <div class="loading-state" id="loadingState">
+        <div class="loading-dots">
+          <span></span><span></span><span></span>
+        </div>
+        <p style="font-size:13px">Building your brief...</p>
+      </div>
+
+      <div class="brief-content" id="briefContent"></div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <span>travel-growth-playbook · <a href="https://github.com/thaolst/travel-growth-playbook" target="_blank">github.com/thaolst</a></span>
+  <span>Free to use · Built for travel marketers</span>
+</footer>
+
+<script>
+  const selections = {
+    segment: null,
+    verticals: [],
+    season: null,
+    goal: null,
+    platform: null
+  };
+
+  // Single select
+  ['segmentOpts', 'seasonOpts', 'goalOpts', 'platformOpts'].forEach(id => {
+    document.getElementById(id).querySelectorAll('.opt').forEach(opt => {
+      opt.addEventListener('click', () => {
+        opt.closest('.options').querySelectorAll('.opt').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        const key = id.replace('Opts', '').toLowerCase();
+        if (key === 'season') selections.season = opt.dataset.val;
+        else if (key === 'goal') selections.goal = opt.dataset.val;
+        else if (key === 'platform') selections.platform = opt.dataset.val;
+        else selections.segment = opt.dataset.val;
+        updatePromptChain();
+      });
+    });
+  });
+
+  // Multi select
+  document.getElementById('verticalOpts').querySelectorAll('.opt').forEach(opt => {
+    opt.addEventListener('click', () => {
+      opt.classList.toggle('selected');
+      const val = opt.dataset.val;
+      if (opt.classList.contains('selected')) {
+        selections.verticals.push(val);
+      } else {
+        selections.verticals = selections.verticals.filter(v => v !== val);
+      }
+      updatePromptChain();
+    });
+  });
+
+  document.getElementById('extraContext').addEventListener('input', updatePromptChain);
+
+  function buildSystemPrompt() {
+    return `You are an expert travel growth marketing strategist with deep experience in multi-modal travel platforms (airline, bus, train, hotel) in Southeast Asia, particularly Vietnam.
+
+You specialize in:
+- User segmentation by travel motivation (Connection Seeker, Relaxation Seeker, Family Traveler, Explorer)
+- Seasonal campaign planning aligned with Vietnam travel demand patterns
+- Promotion mechanics: ATL, BTL, gamification, loyalty, partnership
+- Retention strategy for low-frequency travel verticals
+- Cross-sell and bundle mechanics across transport and accommodation
+
+Your output is always practical, specific, and immediately actionable. You avoid generic marketing advice and always connect recommendations to travel-specific user behavior.`;
+  }
+
+  function buildUserPrompt() {
+    const ctx = document.getElementById('extraContext').value.trim();
+    const verticals = selections.verticals.length > 0 ? selections.verticals.join(', ') : '[not selected]';
+
+    return `Build a complete campaign brief for the following travel marketing campaign.
+
+CAMPAIGN INPUTS:
+- Platform: ${selections.platform || '[not selected]'}
+- Target Segment: ${selections.segment || '[not selected]'}
+- Vertical(s): ${verticals}
+- Season / Moment: ${selections.season || '[not selected]'}
+- Campaign Goal: ${selections.goal || '[not selected]'}
+${ctx ? `- Additional Context: ${ctx}` : ''}
+
+OUTPUT FORMAT — write a structured brief with these exact sections:
+
+## Campaign Objective
+One sentence. Specific and measurable.
+
+## Target Audience
+Who specifically. Behavioral profile beyond demographics. What they need right now given the season.
+
+## Key Insight
+The one human truth about this segment in this season that the campaign should be built on.
+
+## Campaign Message
+One core message. What we want users to think/feel/do. Then 2-3 execution angles (emotional, functional, urgency).
+
+## Promotion Mechanic
+Specific recommendation: ATL / BTL / partnership / gamification / loyalty. Exact offer mechanic (not vague — e.g. "exclusive 20% off on flight + hotel bundle, max 300k VND, 14-day expiry, valid for new users only"). Why this mechanic fits this segment and season.
+
+## Channel Plan
+Ranked by priority for this specific segment and goal. One line of rationale per channel.
+
+## KPIs
+3 metrics with realistic targets for Vietnam travel market. Include: primary conversion metric, efficiency metric (CAC or cost/acquisition), and retention/quality metric.
+
+## Watch Out For
+2-3 specific things that could go wrong with this campaign given the segment and season. Be specific to travel behavior, not generic.
+
+Write in a direct, practitioner tone. No fluff. Every recommendation should be traceable to travel user behavior.`;
+  }
+
+  function updatePromptChain() {
+    const chain = `=== SYSTEM PROMPT ===
+${buildSystemPrompt()}
+
+=== USER PROMPT ===
+${buildUserPrompt()}`;
+    document.getElementById('promptChain').textContent = chain;
+  }
+
+  async function generateBrief() {
+    const apiKey = document.getElementById('apiKey').value.trim();
+    if (!apiKey) {
+      showError('Please enter your Anthropic API key.');
+      return;
+    }
+
+    if (!selections.segment || !selections.season || !selections.goal || !selections.platform) {
+      showError('Please select: Segment, Season, Goal, and Platform.');
+      return;
+    }
+
+    if (selections.verticals.length === 0) {
+      showError('Please select at least one vertical.');
+      return;
+    }
+
+    clearError();
+    setLoading(true);
+
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1500,
+          system: buildSystemPrompt(),
+          messages: [{ role: 'user', content: buildUserPrompt() }]
+        })
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error?.message || `API error ${response.status}`);
+      }
+
+      const data = await response.json();
+      const text = data.content[0].text;
+      renderBrief(text);
+
+    } catch (err) {
+      showError(`Error: ${err.message}`);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function renderBrief(markdown) {
+    document.getElementById('placeholderState').style.display = 'none';
+    document.getElementById('loadingState').style.display = 'none';
+
+    const html = markdown
+      .replace(/^## (.+)$/gm, '<h4>$1</h4>')
+      .replace(/^### (.+)$/gm, '<h5 style="font-weight:500;margin:12px 0 6px;font-size:13px;">$1</h5>')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/^- (.+)$/gm, '<li>$1</li>')
+      .replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>')
+      .replace(/\n\n/g, '</p><p>')
+      .replace(/^(?!<[hul])/gm, '')
+      .replace(/<p><\/p>/g, '');
+
+    const content = document.getElementById('briefContent');
+    content.innerHTML = `<p>${html}</p>`;
+    content.style.display = 'block';
+  }
+
+  function copyBrief() {
+    const content = document.getElementById('briefContent');
+    if (!content.textContent.trim()) return;
+    navigator.clipboard.writeText(content.innerText);
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied ✓';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  }
+
+  function setLoading(on) {
+    document.getElementById('generateBtn').disabled = on;
+    document.getElementById('generateBtn').textContent = on ? 'Generating...' : 'Generate Campaign Brief →';
+    document.getElementById('loadingState').style.display = on ? 'flex' : 'none';
+    document.getElementById('placeholderState').style.display = on ? 'none' : (document.getElementById('briefContent').style.display === 'none' ? 'flex' : 'none');
+    if (on) document.getElementById('briefContent').style.display = 'none';
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('errorMsg');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  function clearError() {
+    document.getElementById('errorMsg').style.display = 'none';
+  }
+
+  updatePromptChain();
+</script>
+</body>
+</html>

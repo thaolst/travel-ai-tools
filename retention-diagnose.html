@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Travel Retention Diagnose</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e1117;
+    --surface: #161b25;
+    --surface2: #1e2533;
+    --border: #2a3345;
+    --accent: #4f9cf9;
+    --accent2: #f97b4f;
+    --green: #4fbd8a;
+    --red: #f95f5f;
+    --text: #e8eaf0;
+    --muted: #7a8499;
+    --muted2: #4a5568;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+  }
+
+  .pill {
+    background: var(--accent2);
+    color: white;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+
+  .pill.green { background: var(--green); }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px;
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+
+  .form-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px;
+  }
+
+  .panel-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .panel-subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  .api-field {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px;
+    margin-bottom: 20px;
+  }
+
+  .api-field label {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .api-field input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    font-family: monospace;
+    font-size: 12px;
+    color: var(--text);
+    outline: none;
+  }
+
+  .api-field input::placeholder { color: var(--muted2); }
+
+  .api-field .hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+
+  .api-field .hint a { color: var(--accent); text-decoration: none; }
+
+  .field { margin-bottom: 18px; }
+
+  .field label {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .chip {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--text);
+    user-select: none;
+  }
+
+  .chip:hover { border-color: var(--accent); color: var(--accent); }
+
+  .chip.active {
+    background: rgba(79, 156, 249, 0.15);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .chip.multi.active {
+    background: rgba(79, 189, 138, 0.15);
+    border-color: var(--green);
+    color: var(--green);
+  }
+
+  input[type="number"], input[type="text"], select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+
+  input[type="number"]:focus,
+  input[type="text"]:focus,
+  select:focus { border-color: var(--accent); }
+
+  select option { background: var(--surface2); }
+
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: var(--text);
+    resize: vertical;
+    min-height: 70px;
+    outline: none;
+    line-height: 1.5;
+    transition: border-color 0.2s;
+  }
+
+  textarea:focus { border-color: var(--accent); }
+  textarea::placeholder { color: var(--muted2); }
+
+  .diagnose-btn {
+    width: 100%;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 13px;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 6px;
+    letter-spacing: 0.3px;
+  }
+
+  .diagnose-btn:hover { background: #3a8ae8; }
+  .diagnose-btn:disabled { background: var(--muted2); cursor: not-allowed; }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 20px 0;
+  }
+
+  details summary {
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  details summary:hover { color: var(--text); }
+
+  .prompt-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px;
+    font-family: monospace;
+    font-size: 11px;
+    line-height: 1.6;
+    color: var(--muted);
+    white-space: pre-wrap;
+    margin-top: 12px;
+    max-height: 250px;
+    overflow-y: auto;
+  }
+
+  /* Output panel */
+  .output-panel { }
+
+  .output-placeholder {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 60px 40px;
+    text-align: center;
+    color: var(--muted);
+  }
+
+  .output-placeholder .icon { font-size: 36px; margin-bottom: 12px; opacity: 0.5; }
+  .output-placeholder p { font-size: 13px; line-height: 1.6; max-width: 260px; margin: 0 auto; }
+
+  .output-loading {
+    display: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 60px 40px;
+    text-align: center;
+    color: var(--muted);
+  }
+
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .diagnosis-result {
+    display: none;
+  }
+
+  .risk-banner {
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .risk-banner.high { background: rgba(249, 95, 95, 0.12); border: 1px solid rgba(249, 95, 95, 0.3); }
+  .risk-banner.medium { background: rgba(249, 123, 79, 0.12); border: 1px solid rgba(249, 123, 79, 0.3); }
+  .risk-banner.low { background: rgba(79, 189, 138, 0.12); border: 1px solid rgba(79, 189, 138, 0.3); }
+
+  .risk-banner .risk-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .risk-banner .risk-level {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .risk-banner.high .risk-level { color: var(--red); }
+  .risk-banner.medium .risk-level { color: var(--accent2); }
+  .risk-banner.low .risk-level { color: var(--green); }
+
+  .risk-banner .risk-action {
+    font-size: 12px;
+    color: var(--muted);
+    max-width: 200px;
+    text-align: right;
+    line-height: 1.4;
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+  }
+
+  .card.full { grid-column: 1 / -1; }
+
+  .card-label {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-label .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .card-label .dot.orange { background: var(--accent2); }
+  .card-label .dot.green { background: var(--green); }
+  .card-label .dot.red { background: var(--red); }
+
+  .card-content {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  .card-content h5 {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    margin: 12px 0 6px;
+    color: var(--accent);
+  }
+
+  .card-content h5:first-child { margin-top: 0; }
+
+  .card-content ul {
+    padding-left: 16px;
+    margin: 6px 0;
+  }
+
+  .card-content li { margin-bottom: 4px; color: var(--muted); }
+  .card-content li strong { color: var(--text); font-weight: 500; }
+
+  .card-content p { margin-bottom: 8px; color: var(--muted); }
+  .card-content p strong { color: var(--text); font-weight: 500; }
+
+  .signal-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .signal-item:last-child { border-bottom: none; }
+
+  .signal-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent2);
+    min-width: 24px;
+    line-height: 1;
+    margin-top: 1px;
+  }
+
+  .signal-text {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .signal-text strong { color: var(--text); font-weight: 500; display: block; margin-bottom: 2px; }
+
+  .copy-btn {
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'Inter', sans-serif;
+    float: right;
+    margin-bottom: 16px;
+  }
+
+  .copy-btn:hover { border-color: var(--text); color: var(--text); }
+
+  .error-msg {
+    background: rgba(249, 95, 95, 0.1);
+    border: 1px solid rgba(249, 95, 95, 0.3);
+    border-radius: 6px;
+    padding: 14px;
+    font-size: 13px;
+    color: var(--red);
+    margin-bottom: 16px;
+    display: none;
+  }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 16px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  footer a { color: var(--accent); text-decoration: none; }
+
+  @media (max-width: 900px) {
+    main { grid-template-columns: 1fr; padding: 20px; }
+    .cards-grid { grid-template-columns: 1fr; }
+    header { padding: 16px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Retention Cohort Diagnose</h1>
+  <div class="pill">Travel Growth</div>
+  <div class="pill green">Free Tool</div>
+</header>
+
+<main>
+  <div class="form-panel">
+    <p class="panel-title">Describe your cohort</p>
+    <p class="panel-subtitle">Input what you know about a user cohort. Get a retention risk assessment and a specific playbook to fix it.</p>
+
+    <div class="api-field">
+      <label>Anthropic API Key</label>
+      <input type="password" id="apiKey" placeholder="sk-ant-..." />
+      <p class="hint">Stays in your browser only. <a href="https://console.anthropic.com" target="_blank">Get key →</a></p>
+    </div>
+
+    <div class="field">
+      <label>Segment (if known)</label>
+      <div class="chips" id="segmentChips">
+        <div class="chip" data-val="Connection Seeker">🤝 Connection Seeker</div>
+        <div class="chip" data-val="Relaxation Seeker">🌿 Relaxation Seeker</div>
+        <div class="chip" data-val="Family Traveler">👨‍👩‍👧‍👦 Family Traveler</div>
+        <div class="chip" data-val="Explorer">🗺️ Explorer</div>
+        <div class="chip" data-val="Unknown">❓ Unknown</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Verticals used (chọn nhiều)</label>
+      <div class="chips" id="verticalChips">
+        <div class="chip multi" data-val="Airline">✈️ Airline</div>
+        <div class="chip multi" data-val="Bus">🚌 Bus</div>
+        <div class="chip multi" data-val="Train">🚂 Train</div>
+        <div class="chip multi" data-val="Hotel">🏨 Hotel</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="row-2">
+        <div>
+          <label>Total bookings</label>
+          <input type="number" id="totalBookings" placeholder="e.g. 1" min="1" />
+        </div>
+        <div>
+          <label>First booking</label>
+          <select id="firstBooking">
+            <option value="">Select...</option>
+            <option value="less than 30 days ago">< 30 days ago</option>
+            <option value="1-2 months ago">1-2 months ago</option>
+            <option value="3-4 months ago">3-4 months ago</option>
+            <option value="5-6 months ago">5-6 months ago</option>
+            <option value="6-12 months ago">6-12 months ago</option>
+            <option value="over 12 months ago">> 12 months ago</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="row-2">
+        <div>
+          <label>Last booking</label>
+          <select id="lastBooking">
+            <option value="">Select...</option>
+            <option value="within last 30 days">< 30 days ago</option>
+            <option value="30-60 days ago">30-60 days ago</option>
+            <option value="60-90 days ago">60-90 days ago</option>
+            <option value="90-180 days ago">90-180 days ago</option>
+            <option value="over 180 days ago">> 180 days ago</option>
+          </select>
+        </div>
+        <div>
+          <label>Cohort size</label>
+          <input type="text" id="cohortSize" placeholder="e.g. 5,000 users" />
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>What promo / retention have you tried? (optional)</label>
+      <textarea id="tried" placeholder="e.g. sent generic voucher 30 days after first booking, open rate 15%, redemption rate 2%..."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Any other context? (optional)</label>
+      <textarea id="context" placeholder="Platform type, competitor dynamics, market, budget constraints..."></textarea>
+    </div>
+
+    <div class="error-msg" id="errorMsg"></div>
+
+    <button class="diagnose-btn" id="diagnoseBtn" onclick="diagnose()">
+      Run Retention Diagnosis →
+    </button>
+
+    <hr class="divider">
+
+    <details>
+      <summary>📋 Prompt Chain — use without API key</summary>
+      <div class="prompt-box" id="promptChain">Fill in the form above to see your prompt chain.</div>
+    </details>
+  </div>
+
+  <div class="output-panel">
+    <div class="output-placeholder" id="placeholder">
+      <div class="icon">🔬</div>
+      <p>Describe your cohort on the left. Get a retention diagnosis and specific playbook.</p>
+    </div>
+
+    <div class="output-loading" id="loading">
+      <div class="spinner"></div>
+      <p style="font-size:13px;color:var(--muted)">Analyzing cohort...</p>
+    </div>
+
+    <div class="diagnosis-result" id="result">
+      <button class="copy-btn" onclick="copyResult()">Copy all</button>
+      <div id="resultContent"></div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <span>travel-growth-playbook · <a href="https://github.com/thaolst/travel-growth-playbook" target="_blank">github.com/thaolst</a></span>
+  <span>Free · Built for travel marketers</span>
+</footer>
+
+<script>
+  const sel = { segment: null, verticals: [] };
+
+  document.getElementById('segmentChips').querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.getElementById('segmentChips').querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      sel.segment = chip.dataset.val;
+      updatePrompt();
+    });
+  });
+
+  document.getElementById('verticalChips').querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      chip.classList.toggle('active');
+      const v = chip.dataset.val;
+      if (chip.classList.contains('active')) sel.verticals.push(v);
+      else sel.verticals = sel.verticals.filter(x => x !== v);
+      updatePrompt();
+    });
+  });
+
+  ['totalBookings','firstBooking','lastBooking','cohortSize','tried','context'].forEach(id => {
+    document.getElementById(id).addEventListener('input', updatePrompt);
+    document.getElementById(id).addEventListener('change', updatePrompt);
+  });
+
+  function buildSystem() {
+    return `You are a retention strategist specializing in travel platforms in Vietnam and Southeast Asia. You have deep expertise in:
+
+- Travel user behavior across airline, bus, train, hotel verticals
+- Low-frequency purchase dynamics (users booking 2-4x per year)
+- Retention mechanics specific to travel: seasonal triggers, journey campaigns, loyalty design
+- Vietnam travel market: Tết seasonality, 30/4, summer peak, off-peak recovery
+- Cohort analysis and churn prediction for travel platforms
+
+You give direct, specific, actionable diagnosis. No generic retention advice. Every recommendation connects to travel-specific behavior patterns.`;
+  }
+
+  function buildPrompt() {
+    const seg = sel.segment || 'Unknown';
+    const verts = sel.verticals.length ? sel.verticals.join(', ') : 'Not specified';
+    const total = document.getElementById('totalBookings').value || 'Not specified';
+    const first = document.getElementById('firstBooking').value || 'Not specified';
+    const last = document.getElementById('lastBooking').value || 'Not specified';
+    const size = document.getElementById('cohortSize').value || 'Not specified';
+    const tried = document.getElementById('tried').value || 'Nothing tried yet';
+    const ctx = document.getElementById('context').value || '';
+
+    return `Diagnose the retention health of this travel user cohort and give me a specific playbook to fix it.
+
+COHORT PROFILE:
+- Segment: ${seg}
+- Verticals used: ${verts}
+- Total bookings: ${total}
+- First booking: ${first}
+- Last booking: ${last}
+- Cohort size: ${size}
+- Retention efforts tried: ${tried}
+${ctx ? `- Additional context: ${ctx}` : ''}
+
+OUTPUT FORMAT — use these exact sections:
+
+## RISK LEVEL
+State: HIGH / MEDIUM / LOW
+One sentence explaining why.
+
+## ROOT CAUSE ANALYSIS
+What is actually causing the retention problem for this specific cohort? Be specific to travel behavior, not generic. 2-3 paragraphs.
+
+## TOP 3 CHURN SIGNALS
+For each signal: name it, explain what it indicates specifically in travel context, and why it matters for this cohort.
+
+## 90-DAY PLAYBOOK
+Specific actions broken into 3 phases. For each action: what exactly to do, timing, channel, offer mechanic if relevant. Be specific — not "send a re-engagement email" but "send push notification on day 45 with exclusive route deal for [their most used vertical], 20% off, 14-day expiry, personalized to last searched destination."
+
+## WHAT NOT TO DO
+2 specific mistakes to avoid with this cohort given their profile and what's already been tried.
+
+## SUCCESS METRICS
+3 metrics to track over the 90-day playbook. Include targets realistic for Vietnam travel market.
+
+Be direct. Be specific to travel. No fluff.`;
+  }
+
+  function updatePrompt() {
+    document.getElementById('promptChain').textContent = `=== SYSTEM ===\n${buildSystem()}\n\n=== USER PROMPT ===\n${buildPrompt()}`;
+  }
+
+  async function diagnose() {
+    const apiKey = document.getElementById('apiKey').value.trim();
+    if (!apiKey) { showError('Please enter your Anthropic API key.'); return; }
+    if (!document.getElementById('firstBooking').value) { showError('Please select when the first booking was.'); return; }
+    if (!document.getElementById('lastBooking').value) { showError('Please select when the last booking was.'); return; }
+
+    clearError();
+    setLoading(true);
+
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1500,
+          system: buildSystem(),
+          messages: [{ role: 'user', content: buildPrompt() }]
+        })
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error?.message || `API error ${res.status}`);
+      }
+
+      const data = await res.json();
+      renderResult(data.content[0].text);
+
+    } catch (err) {
+      showError(`Error: ${err.message}`);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function renderResult(markdown) {
+    document.getElementById('placeholder').style.display = 'none';
+    document.getElementById('loading').style.display = 'none';
+
+    // Detect risk level
+    const riskMatch = markdown.match(/##\s*RISK LEVEL\s*\n([^\n]+)/i);
+    const riskText = riskMatch ? riskMatch[1].toUpperCase() : '';
+    const riskLevel = riskText.includes('HIGH') ? 'high' : riskText.includes('LOW') ? 'low' : 'medium';
+    const riskLabel = riskText.includes('HIGH') ? 'High Risk' : riskText.includes('LOW') ? 'Low Risk' : 'Medium Risk';
+
+    // Get risk reason (line after risk level)
+    const lines = markdown.split('\n');
+    const riskIdx = lines.findIndex(l => l.match(/##\s*RISK LEVEL/i));
+    const riskReason = riskIdx >= 0 ? lines.slice(riskIdx + 1).find(l => l.trim() && !l.startsWith('#')) || '' : '';
+
+    const html = `
+      <div class="risk-banner ${riskLevel}">
+        <div>
+          <div class="risk-label">Retention Risk</div>
+          <div class="risk-level">${riskLabel}</div>
+        </div>
+        <div class="risk-action">${riskReason.replace(/^(HIGH|MEDIUM|LOW)[:\s]*/i,'').trim()}</div>
+      </div>
+
+      <div class="cards-grid">
+        ${renderSection(markdown, 'ROOT CAUSE ANALYSIS', 'orange', '🔍 Root Cause', false)}
+        ${renderSection(markdown, 'WHAT NOT TO DO', 'red', '⚠️ What Not To Do', false)}
+        ${renderSection(markdown, 'TOP 3 CHURN SIGNALS', 'accent', '📡 Churn Signals', false)}
+        ${renderSection(markdown, 'SUCCESS METRICS', 'green', '📊 Success Metrics', false)}
+        ${renderSection(markdown, '90-DAY PLAYBOOK', 'accent', '🗓️ 90-Day Playbook', true)}
+      </div>
+    `;
+
+    document.getElementById('resultContent').innerHTML = html;
+    document.getElementById('result').style.display = 'block';
+  }
+
+  function renderSection(markdown, sectionName, dotColor, label, full) {
+    const regex = new RegExp(`##\\s*${sectionName}\\s*\\n([\\s\\S]*?)(?=\\n##|$)`, 'i');
+    const match = markdown.match(regex);
+    if (!match) return '';
+
+    const content = match[1]
+      .replace(/###\s*(.+)/g, '<h5>$1</h5>')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/^-\s(.+)$/gm, '<li><strong>$1</strong></li>')
+      .replace(/^\d+\.\s(.+)$/gm, '<li>$1</li>')
+      .replace(/(<li>[\s\S]*?<\/li>)+/g, m => `<ul>${m}</ul>`)
+      .replace(/\n\n/g, '</p><p>')
+      .trim();
+
+    return `
+      <div class="card ${full ? 'full' : ''}">
+        <div class="card-label"><div class="dot ${dotColor}"></div>${label}</div>
+        <div class="card-content"><p>${content}</p></div>
+      </div>
+    `;
+  }
+
+  function copyResult() {
+    const el = document.getElementById('resultContent');
+    navigator.clipboard.writeText(el.innerText);
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied ✓';
+    setTimeout(() => btn.textContent = 'Copy all', 2000);
+  }
+
+  function setLoading(on) {
+    document.getElementById('diagnoseBtn').disabled = on;
+    document.getElementById('diagnoseBtn').textContent = on ? 'Analyzing...' : 'Run Retention Diagnosis →';
+    document.getElementById('loading').style.display = on ? 'block' : 'none';
+    if (on) {
+      document.getElementById('placeholder').style.display = 'none';
+      document.getElementById('result').style.display = 'none';
+    }
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('errorMsg');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  function clearError() {
+    document.getElementById('errorMsg').style.display = 'none';
+  }
+
+  updatePrompt();
+</script>
+</body>
+</html>
