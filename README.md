@@ -14,8 +14,6 @@ Không cần cài đặt. Không lưu data. Chỉ cần Anthropic API key và tr
 
 🔗 **[→ Dùng thử tại thaolst.github.io/travel-ai-tools](https://thaolst.github.io/travel-ai-tools)**
 
----
-
 ## 🛠️ Hai công cụ
 
 ### 🧭 Campaign Brief Generator
@@ -147,7 +145,7 @@ thói quen mới với đối thủ.
 ## 90-DAY PLAYBOOK
 
 Phase 1: Re-engagement (Day 1-30)
-- Day 1: Gửi push + email "Chúng tôi nhớ bạn" — không phải 
+- Day 1: Gửi push + email "Chúng mình nhớ bạn" — không phải 
     voucher, mà là personalised recap: route họ đã đi + gợi ý 
     route tương tự với giá hiện tại.
 - Day 7: Nếu không react — SMS voucher 50k cho bus route bất 
@@ -182,11 +180,7 @@ Phase 3: Loyalty seeding (Day 61-90)
 ```
 </details>
 
----
-
 > ⚡ Cả 2 tool cho output ngay sau ~10-15 giây. Không cần tài khoản, không cần đăng ký — chỉ cần API key.
-
----
 
 ## 🔑 Cách dùng
 
@@ -215,8 +209,6 @@ travel-ai-tools/
 Growth Marketing Manager với kinh nghiệm launch và scale travel platform tại Việt Nam, covering airline, bus, train, hotel, và experience verticals.
 🔗 [Facebook](https://www.facebook.com/LeSongTienThao) · [LinkedIn](https://linkedin.com/in/thaolst) · [X](https://x.com/thaolst)
 
----
-
 # 🤖 Travel AI Tools
 
 Two free AI tools for travel marketers — built on the frameworks in [travel-growth-playbook](https://github.com/thaolst/travel-growth-playbook).
@@ -224,8 +216,6 @@ Two free AI tools for travel marketers — built on the frameworks in [travel-gr
 No installation. No data stored. Just an Anthropic API key and a browser.
 
 🔗 **[→ Try at thaolst.github.io/travel-ai-tools](https://thaolst.github.io/travel-ai-tools)**
-
----
 
 ## 🛠️ Two Tools
 
@@ -393,11 +383,7 @@ Phase 3: Loyalty seeding (Day 61-90)
 ```
 </details>
 
----
-
 > ⚡ Both tools return output in ~10-15 seconds. No account, no signup — just an API key.
-
----
 
 ## 🔑 How to Use
 
