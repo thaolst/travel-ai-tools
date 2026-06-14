@@ -4,6 +4,7 @@ Hai công cụ AI miễn phí dành cho travel marketer — được build từ 
 
 Không cần cài đặt. Không lưu data. Chỉ cần Anthropic API key và trình duyệt.
 
+![Version](https://img.shields.io/github/v/release/thaolst/travel-ai-tools?color=orange&label=version)
 ![Last Commit](https://img.shields.io/github/last-commit/thaolst/travel-ai-tools?color=orange)
 ![License](https://img.shields.io/github/license/thaolst/travel-ai-tools)
 ![Stars](https://img.shields.io/github/stars/thaolst/travel-ai-tools?style=social)
